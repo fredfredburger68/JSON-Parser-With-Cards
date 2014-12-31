@@ -9,10 +9,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -32,13 +35,32 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         return eventList.size();
     }
 
+    private String getDisplayDate(String date) throws ParseException {
+        String day, month, year, result;
+
+        SimpleDateFormat simpForm = new SimpleDateFormat("MM/dd/yyyy");
+        SimpleDateFormat dispForm = new SimpleDateFormat("EEEE, MMMM dd yyyy");
+
+        day = date.substring(8,10);
+        month = date.substring(5,7);
+        year = date.substring(0,4);
+        result = month + "/" + day + "/" + year;
+
+        result = dispForm.format(simpForm.parse(result));
+
+        return result;
+    }
+
     public void onBindViewHolder(EventViewHolder eventViewHolder, int i)
     {
         EventInfo ei = eventList.get(i);
         eventViewHolder.vTitle.setText(ei.title);
-        eventViewHolder.vDate.setText(ei.date);
-        //eventViewHolder.vPicture.setImageBitmap(ei.picture);
-        DownloadImageTask dit = new DownloadImageTask(eventViewHolder.vPicture);
+        try {
+            eventViewHolder.vDate.setText(getDisplayDate(ei.date));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        DownloadImageTask dit = new DownloadImageTask(eventViewHolder.vPicture, eventViewHolder.vProgressBar);
         dit.execute(ei.pictureURL);
         eventViewHolder.vType.setText(ei.type);
     }
@@ -57,6 +79,9 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         protected TextView vDate;
         protected ImageView vPicture;
         protected TextView vType;
+        protected ProgressBar vProgressBar;
+
+
 
         public EventViewHolder(View v){
             super(v);
@@ -64,14 +89,18 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             vDate = (TextView) v.findViewById(R.id.txtDate);
             vPicture = (ImageView) v.findViewById(R.id.picture);
             vType = (TextView) v.findViewById(R.id.txtType);
+            vProgressBar = (ProgressBar) v.findViewById(R.id.imgLoad);
         }
     }
 
     class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         ImageView bmImage;
+        ProgressBar pb;
 
-        public DownloadImageTask(ImageView bmImage){
+        public DownloadImageTask(ImageView bmImage, ProgressBar pb){
+
             this.bmImage = bmImage;
+            this.pb = pb;
         }
 
         protected Bitmap doInBackground(String... urls){
@@ -89,6 +118,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
         protected void onPostExecute(Bitmap result){
             bmImage.setImageBitmap(result);
+            pb.setVisibility(View.INVISIBLE);
+            bmImage.setVisibility(View.VISIBLE);
         }
     }
 

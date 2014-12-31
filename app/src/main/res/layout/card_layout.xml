@@ -49,14 +49,16 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/picture"
                 android:layout_gravity="center"
-                android:scaleType="fitCenter"   />
+                android:scaleType="fitCenter"
+                android:visibility="invisible"  />
 
             <ProgressBar
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="@android:style/Widget.ProgressBar.Small"
                 android:layout_gravity="center"
-                android:id="@+id/imgLoad" />
+                android:id="@+id/imgLoad"
+                android:visibility="visible"    />
 
         </FrameLayout>
 
@@ -69,7 +71,7 @@
             android:layout_below="@+id/frameLayout"
             android:layout_alignParentStart="true"
             android:background="#701D1D"
-            android:textColor="#ffffff"/>
+            android:textColor="#ffffff"  />
 
         <TextView
             android:layout_width="wrap_content"
@@ -80,7 +82,7 @@
             android:layout_below="@+id/frameLayout"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="5dp"
-            android:textColor="#ffffff"/>
+            android:textColor="#ffffff"  />
 
 
     </RelativeLayout>
